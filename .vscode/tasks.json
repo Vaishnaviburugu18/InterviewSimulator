@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Interview Simulator",
+      "type": "shell",
+      "command": "cmd /c \"if not exist out mkdir out & dir /b /s src\\*.java > sources.txt & javac -encoding UTF-8 -d out @sources.txt & del sources.txt\"",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$javac"
+      ]
+    }
+  ]
+}
+
