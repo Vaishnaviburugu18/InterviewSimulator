@@ -1,56 +1,83 @@
-# Interview Simulator System (Java Swing + MySQL)
+ # Interview Simulator System (Java Swing + MySQL)
 
 ## What it does
-Desktop placement-prep app with:
-* User registration + login (SHA-256 hashed passwords stored in MySQL)
-* Dashboard with topic selection (Java, DSA, DBMS, OS)
-* 30-second timer per MCQ question
-* Result screen with score %, correct/wrong breakdown, and weak-topic suggestion
-* Previous results history
-* Optional Admin screen (for `admin` username) to add/update/delete questions
 
-## 1) Create the database
-1. Open MySQL client (MySQL 8+ recommended)
+Desktop placement-prep application with:
+
+* User registration and login (SHA-256 hashed passwords stored in MySQL)
+* Dashboard with topic selection (Java, DSA, DBMS, OS)
+* 30-second timer for each MCQ
+* Result screen with score percentage, correct/wrong breakdown, and weak-topic suggestions
+* Previous results history
+* Admin panel (for admin users) to add, update, and delete questions
+
+## 1. Create the Database
+
+1. Open MySQL Client (MySQL 8+ recommended)
 2. Run `database_setup.sql`
 
-This will create:
+This creates:
+
 * Database: `interview_simulator`
 * Tables: `users`, `questions`, `results`
-* Seed users:
-  * `admin` / `password123`
-  * `user1` / `password123`
 
-## 2) Configure MySQL connection
-The app reads these environment variables (fallbacks are for local dev only):
-* `DB_URL` (default: `jdbc:mysql://localhost:3306/interview_simulator?useSSL=false&serverTimezone=UTC`)
-* `DB_USER` (default: `root`)
-* `DB_PASSWORD` (default: `Vaishnavi@18`)
+## 2. Configure MySQL Connection
 
-Example (Windows PowerShell):
+The application reads these environment variables:
+
+* `DB_URL`
+* `DB_USER`
+* `DB_PASSWORD`
+
+Example:
+
 ```powershell
 $env:DB_URL="jdbc:mysql://localhost:3306/interview_simulator?useSSL=false&serverTimezone=UTC"
 $env:DB_USER="root"
-$env:DB_PASSWORD="Vaishnavi@18"
+$env:DB_PASSWORD="your_password"
 ```
 
-## 3) Add MySQL JDBC driver
-Connector/J is now configured under:
-* `lib/mysql-connector-j-9.7.0.jar`
+## 3. Add MySQL JDBC Driver
 
-## 4) Compile and run
-From the project root (`InterviewSimulator/`):
+MySQL Connector/J is configured in:
+
+```text
+lib/mysql-connector-j-9.7.0.jar
+```
+
+## 4. Compile and Run
 
 ### Compile
+
 ```powershell
-cmd /c "if not exist out mkdir out & dir /b /s src\\*.java > sources.txt & javac -encoding UTF-8 -d out @sources.txt & del sources.txt"
+cmd /c "if not exist out mkdir out & dir /b /s src\*.java > sources.txt & javac -encoding UTF-8 -d out @sources.txt & del sources.txt"
 ```
 
 ### Run
+
 ```powershell
 java -cp "out;lib/*" Main
 ```
 
-## Notes
-* Correct answers in `questions.correct_answer` must exactly match one of `option1..option4`.
-* The quiz uses **all** questions for the selected topic.
+## Features
 
+* Java Swing GUI
+* MySQL Database Integration
+* Secure Password Storage
+* Topic-wise Quiz System
+* Result Analytics
+* Admin Question Management
+* Placement Preparation Support
+
+## Technologies Used
+
+* Java
+* Java Swing
+* JDBC
+* MySQL
+* OOP Concepts
+* SHA-256 Password Hashing
+
+## Author
+
+Vaishnavi Burugu
