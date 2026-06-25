@@ -1,56 +1,37 @@
- # Interview Simulator System (Java Swing + MySQL)
+ # Interview Simulator System (Java Swing + SQLite)
 
 ## What it does
 
 Desktop placement-prep application with:
 
-* User registration and login (SHA-256 hashed passwords stored in MySQL)
-* Dashboard with topic selection (Java, DSA, DBMS, OS)
+* User registration and login (SHA-256 hashed passwords stored in SQLite)
+* Dashboard with topic selection (30 domains including Java, DSA, DBMS, OS, React, SQL, and DevOps)
 * 30-second timer for each MCQ
 * Result screen with score percentage, correct/wrong breakdown, and weak-topic suggestions
 * Previous results history
 * Admin panel (for admin users) to add, update, and delete questions
+* Gamified experience with XP levels, streaks, and milestone achievements
+* Resume keyword scanning for topic recommendations
 
-## 1. Create the Database
+## 1. Prerequisites
 
-1. Open MySQL Client (MySQL 8+ recommended)
-2. Run `database_setup.sql`
+No database server installation (like MySQL, Workbench, or XAMPP) is needed! The project runs completely out-of-the-box using a local self-contained SQLite database.
 
-This creates:
+* Java Development Kit (JDK 17 or higher recommended)
 
-* Database: `interview_simulator`
-* Tables: `users`, `questions`, `results`
+## 2. Compile and Run
 
-## 2. Configure MySQL Connection
+The easiest way to run the application is by double-clicking the `run.bat` file in the root directory.
 
-The application reads these environment variables:
-
-* `DB_URL`
-* `DB_USER`
-* `DB_PASSWORD`
-
-Example:
-
-```powershell
-$env:DB_URL="jdbc:mysql://localhost:3306/interview_simulator?useSSL=false&serverTimezone=UTC"
-$env:DB_USER="root"
-$env:DB_PASSWORD="your_password"
-```
-
-## 3. Add MySQL JDBC Driver
-
-MySQL Connector/J is configured in:
-
-```text
-lib/mysql-connector-j-9.7.0.jar
-```
-
-## 4. Compile and Run
+Alternatively, you can compile and run using terminal commands:
 
 ### Compile
 
 ```powershell
-cmd /c "if not exist out mkdir out & dir /b /s src\*.java > sources.txt & javac -encoding UTF-8 -d out @sources.txt & del sources.txt"
+if (!(Test-Path out)) { New-Item -ItemType Directory -Path out }
+Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File -Encoding UTF8 sources.txt
+javac -encoding UTF-8 -cp "lib/*" -d out @sources.txt
+Remove-Item sources.txt -ErrorAction SilentlyContinue
 ```
 
 ### Run
@@ -59,25 +40,21 @@ cmd /c "if not exist out mkdir out & dir /b /s src\*.java > sources.txt & javac 
 java -cp "out;lib/*" Main
 ```
 
-## Features
+## How It Works
 
-* Java Swing GUI
-* MySQL Database Integration
-* Secure Password Storage
-* Topic-wise Quiz System
-* Result Analytics
-* Admin Question Management
-* Placement Preparation Support
+* **Auto-creation:** The application automatically creates `InterviewSimulator.db` in the root folder on the first run.
+* **Auto-initialization:** All database tables and columns are automatically created by `DatabaseInitializer` if they don't exist.
+* **Auto-seeding:** 900 high-quality MCQ questions across 30 domains are seeded automatically on first launch by `DatabaseSeeder`.
 
 ## Technologies Used
 
 * Java
 * Java Swing
-* JDBC
-* MySQL
-* OOP Concepts
+* JDBC (SQLite)
+* SQLite (org.xerial:sqlite-jdbc:3.36.0.3)
 * SHA-256 Password Hashing
 
 ## Author
 
 Vaishnavi Burugu
+
