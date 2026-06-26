@@ -40,7 +40,9 @@ public class LoginPanel extends JPanel {
         heroContent.setOpaque(false);
         heroContent.setBorder(new EmptyBorder(0, 40, 0, 40));
 
-        JLabel brand = new JLabel("🎯 PlacementPrep Pro");
+        JLabel brand = new JLabel("PlacementPrep Pro");
+        brand.setIcon(IconFactory.getIcon("trophy", 28, Color.WHITE));
+        brand.setIconTextGap(10);
         brand.setFont(new Font("Segoe UI", Font.BOLD, 28));
         brand.setForeground(Color.WHITE);
         brand.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -56,10 +58,12 @@ public class LoginPanel extends JPanel {
         heroContent.add(Box.createVerticalStrut(40));
 
         // Feature pills
-        String[] features = {"✅ 30 Domains", "✅ 900+ Questions",
-                             "✅ Company Tests", "✅ Analytics & XP"};
+        String[] features = {"30 Domains", "900+ Questions",
+                             "Company Tests", "Analytics & XP"};
         for (String f : features) {
             JLabel pill = new JLabel(f);
+            pill.setIcon(IconFactory.getIcon("check", 14, new Color(224, 231, 255)));
+            pill.setIconTextGap(8);
             pill.setFont(Theme.BODY_FONT);
             pill.setForeground(new Color(224, 231, 255));
             pill.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -79,7 +83,7 @@ public class LoginPanel extends JPanel {
         card.setBorder(new EmptyBorder(40, 40, 40, 40));
         card.setPreferredSize(new Dimension(420, 480));
 
-        JLabel heading = new JLabel("Welcome back 👋");
+        JLabel heading = new JLabel("Welcome Back");
         heading.setFont(Theme.TITLE_FONT);
         heading.setForeground(Theme.DARK_TEXT_MAIN);
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);

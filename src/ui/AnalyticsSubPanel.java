@@ -45,7 +45,9 @@ public class AnalyticsSubPanel extends JPanel {
         inner.setBackground(Theme.DARK_BG);
         inner.setBorder(new EmptyBorder(28, 28, 28, 28));
 
-        JLabel heading = new JLabel("📈 Performance Analytics");
+        JLabel heading = new JLabel("Performance Analytics");
+        heading.setIcon(IconFactory.getIcon("analytics", 24, Theme.ACCENT));
+        heading.setIconTextGap(10);
         heading.setFont(Theme.TITLE_FONT);
         heading.setForeground(Theme.DARK_TEXT_MAIN);
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -68,7 +70,7 @@ public class AnalyticsSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // Domain averages
-        inner.add(sectionLabel("📊 Domain-wise Averages"));
+        inner.add(sectionLabel("analytics", "Domain-wise Averages"));
         inner.add(Box.createVerticalStrut(12));
 
         chartsArea.setLayout(new BoxLayout(chartsArea, BoxLayout.Y_AXIS));
@@ -78,7 +80,7 @@ public class AnalyticsSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // Recent Activity
-        inner.add(sectionLabel("🕒 Recent Activity"));
+        inner.add(sectionLabel("history", "Recent Activity"));
         inner.add(Box.createVerticalStrut(12));
 
         activityArea.setLayout(new BoxLayout(activityArea, BoxLayout.Y_AXIS));
@@ -105,12 +107,12 @@ public class AnalyticsSubPanel extends JPanel {
             int streak = rs.getUserStreak(u.getUsername());
 
             // 6 summary cards
-            summaryGrid.add(miniStat("Total Tests", String.valueOf(tests), Theme.ACCENT));
-            summaryGrid.add(miniStat("Best Score", best + "%", Theme.SUCCESS));
-            summaryGrid.add(miniStat("Avg Score", avg + "%", Theme.WARNING));
-            summaryGrid.add(miniStat("Current Level", "Level " + level, Theme.SUCCESS));
-            summaryGrid.add(miniStat("Total XP", xp + " XP", Theme.ACCENT));
-            summaryGrid.add(miniStat("Daily Streak", streak + " Days", Theme.DANGER));
+            summaryGrid.add(miniStat("list", "Total Tests", String.valueOf(tests), Theme.ACCENT));
+            summaryGrid.add(miniStat("trophy", "Best Score", best + "%", Theme.SUCCESS));
+            summaryGrid.add(miniStat("analytics", "Avg Score", avg + "%", Theme.WARNING));
+            summaryGrid.add(miniStat("star", "Current Level", "Level " + level, Theme.SUCCESS));
+            summaryGrid.add(miniStat("star", "Total XP", xp + " XP", Theme.ACCENT));
+            summaryGrid.add(miniStat("timer", "Daily Streak", streak + " Days", Theme.DANGER));
 
             // Domain-wise bars
             Map<String, Integer> domainAvg = rs.getDomainAverages(u.getUsername());
@@ -233,27 +235,33 @@ public class AnalyticsSubPanel extends JPanel {
         return card;
     }
 
-    private JPanel miniStat(String title, String value, Color accent) {
+    private JPanel miniStat(String iconKey, String title, String value, Color accent) {
         RoundedPanel p = new RoundedPanel(12, Theme.DARK_CARD);
-        p.setLayout(new BorderLayout(0, 4));
+        p.setLayout(new BorderLayout(8, 4));
         p.setBorder(new EmptyBorder(12, 16, 12, 16));
         p.setBorderOverride(accent.darker(), 1);
 
-        JLabel t = new JLabel(title);
-        t.setFont(Theme.SMALL_FONT);
-        t.setForeground(Theme.DARK_TEXT_SUB);
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        top.setOpaque(false);
+        JLabel icon = new JLabel(IconFactory.getIcon(iconKey, 14, accent));
+        JLabel tl = new JLabel("  " + title);
+        tl.setFont(Theme.SMALL_FONT);
+        tl.setForeground(Theme.DARK_TEXT_SUB);
+        top.add(icon); top.add(tl);
 
         JLabel v = new JLabel(value);
         v.setFont(new Font("Segoe UI", Font.BOLD, 20));
         v.setForeground(Color.WHITE);
 
-        p.add(t, BorderLayout.NORTH);
+        p.add(top, BorderLayout.NORTH);
         p.add(v, BorderLayout.CENTER);
         return p;
     }
 
-    private JLabel sectionLabel(String text) {
+    private JLabel sectionLabel(String iconKey, String text) {
         JLabel l = new JLabel(text);
+        l.setIcon(IconFactory.getIcon(iconKey, 18, Theme.ACCENT));
+        l.setIconTextGap(8);
         l.setFont(Theme.SUBTITLE_FONT);
         l.setForeground(Theme.DARK_TEXT_MAIN);
         l.setAlignmentX(Component.LEFT_ALIGNMENT);

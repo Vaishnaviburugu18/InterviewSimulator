@@ -37,9 +37,19 @@ public class QuizPanel extends JPanel {
     // UI Components
     private final JLabel topicLabel = new JLabel();
     private final JLabel qNumLabel = new JLabel();
-    private final JLabel timerLabel = new JLabel("⏱ 30s");
+    private final JLabel timerLabel = new JLabel("30s");
     private final JLabel modeLabel = new JLabel();
-    private final JLabel difficultyBadge = new JLabel();
+    private final JLabel difficultyBadge = new JLabel() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    };
     private final JProgressBar progBar = new JProgressBar();
 
     private final JTextArea questionText = new JTextArea();
@@ -47,10 +57,10 @@ public class QuizPanel extends JPanel {
     private final JRadioButton[] opts = new JRadioButton[4];
     private final JPanel[] optPanels = new JPanel[4];
 
-    private final JButton prevBtn = new JButton("◀ Previous");
-    private final JButton nextBtn = new JButton("Next ▶");
-    private final JButton clearBtn = new JButton("🗑 Clear Choice");
-    private final JButton submitBtn = new JButton("✔ Finish Quiz");
+    private final ModernButton prevBtn = new ModernButton("Previous");
+    private final ModernButton nextBtn = new ModernButton("Next");
+    private final ModernButton clearBtn = new ModernButton("Clear Choice");
+    private final ModernButton submitBtn = new ModernButton("Finish Quiz");
 
     private final JPanel navGrid = new JPanel(new GridLayout(0, 5, 6, 6));
 
@@ -69,41 +79,56 @@ public class QuizPanel extends JPanel {
 
     private void buildUI() {
         // ─── TOP BAR (Header Info) ──────────────────────────────────────────
-        JPanel topBar = new JPanel(new BorderLayout(16, 0));
+        JPanel topBar = new JPanel(new GridBagLayout());
         topBar.setBackground(Theme.SIDEBAR_BG);
         topBar.setBorder(new EmptyBorder(16, 24, 16, 24));
 
-        JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-        leftHeader.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.gridx = 0; gbc.gridy = 0;
 
-        topicLabel.setFont(Theme.SUBTITLE_FONT);
+        JPanel row1 = new JPanel(new BorderLayout());
+        row1.setOpaque(false);
+
+        topicLabel.setFont(Theme.TITLE_FONT);
         topicLabel.setForeground(Color.WHITE);
-        leftHeader.add(topicLabel);
+        row1.add(topicLabel, BorderLayout.WEST);
 
-        difficultyBadge.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
-        difficultyBadge.setForeground(Color.WHITE);
-        difficultyBadge.setOpaque(true);
-        difficultyBadge.setBorder(BorderFactory.createEmptyBorder(3, 8, 3, 8));
-        leftHeader.add(difficultyBadge);
+        JPanel rightRow1 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
+        rightRow1.setOpaque(false);
 
-        JPanel rightHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT, 18, 0));
-        rightHeader.setOpaque(false);
-
-        modeLabel.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
+        modeLabel.setFont(Theme.BODY_FONT.deriveFont(Font.BOLD));
         modeLabel.setForeground(Theme.ACCENT);
-        
-        qNumLabel.setFont(Theme.BODY_FONT.deriveFont(Font.BOLD));
-        qNumLabel.setForeground(Theme.DARK_TEXT_MAIN);
+        rightRow1.add(modeLabel);
 
         timerLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         timerLabel.setForeground(Theme.SUCCESS);
+        timerLabel.setIconTextGap(8);
+        rightRow1.add(timerLabel);
 
-        rightHeader.add(modeLabel);
-        rightHeader.add(qNumLabel);
-        rightHeader.add(timerLabel);
+        row1.add(rightRow1, BorderLayout.EAST);
+        topBar.add(row1, gbc);
 
-        topBar.add(leftHeader, BorderLayout.WEST);
-        topBar.add(rightHeader, BorderLayout.EAST);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(8, 0, 0, 0);
+
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        row2.setOpaque(false);
+
+        difficultyBadge.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
+        difficultyBadge.setForeground(Color.WHITE);
+        difficultyBadge.setOpaque(false);
+        difficultyBadge.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+        row2.add(difficultyBadge);
+
+        row2.add(Box.createHorizontalStrut(16));
+
+        qNumLabel.setFont(Theme.BODY_FONT.deriveFont(Font.BOLD));
+        qNumLabel.setForeground(Theme.DARK_TEXT_MAIN);
+        row2.add(qNumLabel);
+
+        topBar.add(row2, gbc);
         add(topBar, BorderLayout.NORTH);
 
         // ─── CENTER CONTAINER (Left Card + Right Navigation) ────────────────
@@ -229,10 +254,26 @@ public class QuizPanel extends JPanel {
         bottomBar.setBackground(Theme.SIDEBAR_BG);
         bottomBar.setBorder(new EmptyBorder(16, 24, 16, 24));
 
-        styleNavBtn(prevBtn, new Color(51, 65, 85));
-        styleNavBtn(nextBtn, Theme.ACCENT);
-        styleNavBtn(clearBtn, new Color(30, 41, 59));
-        styleNavBtn(submitBtn, Theme.SUCCESS);
+        prevBtn.setColors(new Color(51, 65, 85), new Color(71, 85, 105));
+        prevBtn.setIcon(IconFactory.getIcon("prev", 14, Color.WHITE));
+        prevBtn.setIconTextGap(8);
+        prevBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        nextBtn.setColors(Theme.ACCENT, Theme.ACCENT_HOVER);
+        nextBtn.setIcon(IconFactory.getIcon("next", 14, Color.WHITE));
+        nextBtn.setHorizontalTextPosition(SwingConstants.LEFT);
+        nextBtn.setIconTextGap(8);
+        nextBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        clearBtn.setColors(new Color(30, 41, 59), new Color(51, 65, 85));
+        clearBtn.setIcon(IconFactory.getIcon("cross", 12, Color.WHITE));
+        clearBtn.setIconTextGap(8);
+        clearBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        submitBtn.setColors(Theme.SUCCESS, Theme.SUCCESS.darker());
+        submitBtn.setIcon(IconFactory.getIcon("check", 14, Color.WHITE));
+        submitBtn.setIconTextGap(8);
+        submitBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JPanel leftBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         leftBottom.setOpaque(false);
@@ -257,7 +298,9 @@ public class QuizPanel extends JPanel {
 
     private void loadQuestions() {
         String title = company != null ? company + " Assessment" : (domain != null ? domain : "General Exam");
-        topicLabel.setText("📘 " + title);
+        topicLabel.setText(title);
+        topicLabel.setIcon(IconFactory.getIcon("book", 20, Theme.ACCENT));
+        topicLabel.setIconTextGap(10);
         modeLabel.setText(mode + " Mode");
 
         SwingWorker<List<Question>, Void> worker = new SwingWorker<>() {
@@ -301,14 +344,7 @@ public class QuizPanel extends JPanel {
         navGrid.removeAll();
         for (int i = 0; i < questions.size(); i++) {
             final int qi = i;
-            JButton b = new JButton(String.valueOf(i + 1));
-            b.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
-            b.setPreferredSize(new Dimension(30, 30));
-            b.setBackground(Theme.DARK_BORDER);
-            b.setForeground(Theme.DARK_TEXT_SUB);
-            b.setFocusPainted(false);
-            b.setBorderPainted(false);
-            b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            NavButton b = new NavButton(String.valueOf(i + 1));
             b.addActionListener(e -> {
                 saveCurrentAnswer();
                 navigate(qi);
@@ -369,18 +405,19 @@ public class QuizPanel extends JPanel {
         
         // Highlight submit button on the last question
         if (i == questions.size() - 1) {
-            submitBtn.setText("✔ Finish Quiz");
-            submitBtn.setBackground(Theme.SUCCESS);
+            submitBtn.setText("Finish Quiz");
+            submitBtn.setColors(Theme.SUCCESS, Theme.SUCCESS.darker());
         } else {
-            submitBtn.setText("✔ Early Submit");
-            submitBtn.setBackground(new Color(51, 65, 85));
+            submitBtn.setText("Early Submit");
+            submitBtn.setColors(new Color(51, 65, 85), new Color(71, 85, 105));
         }
 
         // Handle Mode timer
         if ("Timed".equalsIgnoreCase(mode) || "Mock".equalsIgnoreCase(mode)) {
             startTimer();
         } else {
-            timerLabel.setText("☕ Unlimited Time");
+            timerLabel.setText("Unlimited Time");
+            timerLabel.setIcon(IconFactory.getIcon("timer", 18, Theme.DARK_TEXT_SUB));
             timerLabel.setForeground(Theme.DARK_TEXT_SUB);
         }
 
@@ -398,17 +435,8 @@ public class QuizPanel extends JPanel {
     private void updateNavGrid() {
         Component[] btns = navGrid.getComponents();
         for (int i = 0; i < btns.length && i < questions.size(); i++) {
-            JButton b = (JButton) btns[i];
-            if (i == idx) {
-                b.setBackground(Theme.ACCENT);
-                b.setForeground(Color.WHITE);
-            } else if (answers.get(i) != null) {
-                b.setBackground(Theme.SUCCESS);
-                b.setForeground(Color.WHITE);
-            } else {
-                b.setBackground(Theme.DARK_BORDER);
-                b.setForeground(Theme.DARK_TEXT_SUB);
-            }
+            NavButton b = (NavButton) btns[i];
+            b.setStates(i == idx, answers.get(i) != null);
         }
     }
 
@@ -435,18 +463,22 @@ public class QuizPanel extends JPanel {
 
     // ─── Timer Handling ──────────────────────────────────────────────────────
     private void startTimer() {
+        stopTimer();
         timeLeft = 30;
         timerLabel.setForeground(Theme.SUCCESS);
-        timerLabel.setText("⏱ " + timeLeft + "s");
+        timerLabel.setIcon(IconFactory.getIcon("timer", 18, Theme.SUCCESS));
+        timerLabel.setText(timeLeft + "s");
 
         countdown = new Timer(1000, e -> {
             timeLeft--;
-            timerLabel.setText("⏱ " + timeLeft + "s");
+            timerLabel.setText(timeLeft + "s");
             
             if (timeLeft <= 5) {
                 timerLabel.setForeground(Theme.DANGER);
+                timerLabel.setIcon(IconFactory.getIcon("timer", 18, Theme.DANGER));
             } else if (timeLeft <= 12) {
                 timerLabel.setForeground(Theme.WARNING);
+                timerLabel.setIcon(IconFactory.getIcon("timer", 18, Theme.WARNING));
             }
 
             if (timeLeft <= 0) {
@@ -518,12 +550,52 @@ public class QuizPanel extends JPanel {
         return l;
     }
 
-    private void styleNavBtn(JButton b, Color bg) {
-        b.setBackground(bg);
-        b.setForeground(Color.WHITE);
-        b.setFont(Theme.BODY_FONT.deriveFont(Font.BOLD));
-        b.setFocusPainted(false);
-        b.setBorder(new EmptyBorder(10, 20, 10, 20));
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private static class NavButton extends JButton {
+        private boolean selected = false;
+        private boolean answered = false;
+
+        public NavButton(String text) {
+            super(text);
+            setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            setForeground(Theme.DARK_TEXT_SUB);
+            setPreferredSize(new Dimension(34, 34));
+        }
+
+        public void setStates(boolean selected, boolean answered) {
+            this.selected = selected;
+            this.answered = answered;
+            if (selected) {
+                setForeground(Color.WHITE);
+            } else if (answered) {
+                setForeground(Color.WHITE);
+            } else {
+                setForeground(Theme.DARK_TEXT_SUB);
+            }
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if (selected) {
+                g2.setColor(Theme.ACCENT);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+            } else if (answered) {
+                g2.setColor(Theme.SUCCESS);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+            } else {
+                g2.setColor(Theme.DARK_CARD.brighter());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.setColor(Theme.DARK_BORDER);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
+            }
+            g2.dispose();
+            super.paintComponent(g);
+        }
     }
 }

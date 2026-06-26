@@ -39,7 +39,9 @@ public class RegisterPanel extends JPanel {
         heroContent.setOpaque(false);
         heroContent.setBorder(new EmptyBorder(0, 40, 0, 40));
 
-        JLabel brand = new JLabel("🚀 Join PlacementPrep Pro");
+        JLabel brand = new JLabel("Join PlacementPrep Pro");
+        brand.setIcon(IconFactory.getIcon("trophy", 28, Color.WHITE));
+        brand.setIconTextGap(10);
         brand.setFont(new Font("Segoe UI", Font.BOLD, 26));
         brand.setForeground(Color.WHITE);
         brand.setAlignmentX(Component.LEFT_ALIGNMENT);

@@ -38,7 +38,9 @@ public class DomainSubPanel extends JPanel {
         topBar.setOpaque(false);
         topBar.setBorder(new EmptyBorder(24, 28, 16, 28));
 
-        JLabel heading = new JLabel("📚 All Domains");
+        JLabel heading = new JLabel("All Domains");
+        heading.setIcon(IconFactory.getIcon("book", 24, Theme.ACCENT));
+        heading.setIconTextGap(10);
         heading.setFont(Theme.TITLE_FONT);
         heading.setForeground(Theme.DARK_TEXT_MAIN);
 
@@ -119,8 +121,7 @@ public class DomainSubPanel extends JPanel {
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         // Icon + title
-        JLabel icon = new JLabel(QuizService.iconFor(domain));
-        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
+        JLabel icon = new JLabel(IconFactory.getIcon(getIconKeyForDomain(domain), 28, Theme.ACCENT));
 
         JLabel name = new JLabel("<html><b>" + domain + "</b></html>");
         name.setFont(Theme.CARD_TITLE_FONT);
@@ -146,15 +147,16 @@ public class DomainSubPanel extends JPanel {
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         actions.setOpaque(false);
 
-        ModernButton startBtn = new ModernButton("▶ Start");
+        ModernButton startBtn = new ModernButton("Start");
+        startBtn.setIcon(IconFactory.getIcon("arrow-right", 12, Color.WHITE));
+        startBtn.setIconTextGap(6);
         startBtn.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
-        startBtn.setPreferredSize(new Dimension(80, 30));
+        startBtn.setPreferredSize(new Dimension(85, 30));
         startBtn.setCornerRadius(8);
 
-        JToggleButton favBtn = new JToggleButton(isFav ? "★" : "☆");
+        JToggleButton favBtn = new JToggleButton();
         favBtn.setSelected(isFav);
-        favBtn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        favBtn.setForeground(isFav ? Theme.WARNING : Theme.DARK_TEXT_SUB);
+        favBtn.setIcon(IconFactory.getIcon(isFav ? "star" : "star-empty", 16, isFav ? Theme.WARNING : Theme.DARK_TEXT_SUB));
         favBtn.setContentAreaFilled(false);
         favBtn.setBorderPainted(false);
         favBtn.setFocusPainted(false);
@@ -163,8 +165,7 @@ public class DomainSubPanel extends JPanel {
 
         favBtn.addActionListener(e -> {
             boolean nowFav = favBtn.isSelected();
-            favBtn.setText(nowFav ? "★" : "☆");
-            favBtn.setForeground(nowFav ? Theme.WARNING : Theme.DARK_TEXT_SUB);
+            favBtn.setIcon(IconFactory.getIcon(nowFav ? "star" : "star-empty", 16, nowFav ? Theme.WARNING : Theme.DARK_TEXT_SUB));
             try {
                 if (nowFav) { profileService.addFavoriteDomain(user.getUsername(), domain); favorites.add(domain); }
                 else        { profileService.removeFavoriteDomain(user.getUsername(), domain); favorites.remove(domain); }
@@ -173,11 +174,7 @@ public class DomainSubPanel extends JPanel {
 
         startBtn.addActionListener(e -> {
             if (user == null) return;
-            String[] modes = {"Practice", "Timed", "Mock"};
-            String diffFilter = selectedDiff.equals("All Levels") ? null : selectedDiff;
-            String mode = (String) JOptionPane.showInputDialog(frame,
-                    "Select Mode for:\n" + domain, "Choose Mode",
-                    JOptionPane.PLAIN_MESSAGE, null, modes, modes[0]);
+            String mode = ModernSelectionDialog.showModeSelection(frame, "Select Quiz Mode", "Choose how you want to attempt: " + domain);
             if (mode != null) frame.startQuiz(user, domain, mode, null);
         });
 
@@ -200,6 +197,21 @@ public class DomainSubPanel extends JPanel {
         });
 
         return card;
+    }
+
+    private String getIconKeyForDomain(String domain) {
+        String lower = domain.toLowerCase();
+        if (lower.contains("java") && !lower.contains("javascript")) return "gear";
+        if (lower.contains("python") || lower.contains("c++") || lower.contains("c programming")) return "settings";
+        if (lower.contains("html") || lower.contains("css") || lower.contains("web")) return "book";
+        if (lower.contains("sql") || lower.contains("dbms") || lower.contains("database")) return "book";
+        if (lower.contains("network")) return "settings";
+        if (lower.contains("operating")) return "settings";
+        if (lower.contains("devops")) return "logout";
+        if (lower.contains("security")) return "lock";
+        if (lower.contains("analytics") || lower.contains("data science") || lower.contains("performance")) return "analytics";
+        if (lower.contains("aptitude") || lower.contains("reasoning")) return "list";
+        return "book";
     }
 
     private void styleField(JTextField f) {

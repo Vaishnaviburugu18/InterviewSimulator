@@ -73,8 +73,8 @@ public class ResultPanel extends JPanel {
         gauge.setScore(percent);
         gauge.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String grade = percent >= 90 ? "Excellent! 🎉" : percent >= 75 ? "Great Job! 🔥" :
-                       percent >= 50 ? "Good Effort 👍" : "Keep Practising 💪";
+        String grade = percent >= 90 ? "Excellent!" : percent >= 75 ? "Great Job!" :
+                       percent >= 50 ? "Good Effort" : "Keep Practising";
         JLabel gradeLbl = new JLabel(grade);
         gradeLbl.setFont(Theme.TITLE_FONT);
         gradeLbl.setForeground(Color.WHITE);
@@ -117,7 +117,7 @@ public class ResultPanel extends JPanel {
             for (Map.Entry<String, Integer> e : domAvg.entrySet()) {
                 String d = e.getKey(); int sc = e.getValue();
                 Color c = sc >= 80 ? Theme.SUCCESS : sc < 50 ? Theme.DANGER : Theme.WARNING;
-                String prefix = sc >= 80 ? "💪 " : sc < 50 ? "📖 " : "📊 ";
+                String prefix = sc >= 80 ? "Expert: " : sc < 50 ? "Needs Review: " : "Competent: ";
                 JLabel chip = new JLabel(prefix + d + " " + sc + "%");
                 chip.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
                 chip.setForeground(c);
@@ -140,7 +140,9 @@ public class ResultPanel extends JPanel {
         } catch (Exception ignored) {}
 
         // Question review
-        JLabel reviewTitle = new JLabel("📝 Question Review");
+        JLabel reviewTitle = new JLabel("Question Review");
+        reviewTitle.setIcon(IconFactory.getIcon("list", 20, Theme.ACCENT));
+        reviewTitle.setIconTextGap(8);
         reviewTitle.setFont(Theme.SUBTITLE_FONT);
         reviewTitle.setForeground(Theme.DARK_TEXT_MAIN);
         reviewTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -165,11 +167,13 @@ public class ResultPanel extends JPanel {
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 14));
         bottom.setBackground(new Color(15,23,42));
 
-        ModernButton dashBtn = new ModernButton("🏠 Back to Dashboard");
+        ModernButton dashBtn = new ModernButton("Back to Dashboard");
+        dashBtn.setIcon(IconFactory.getIcon("home", 16, Color.WHITE));
         dashBtn.setColors(new Color(51,65,85), new Color(71,85,105));
         dashBtn.addActionListener(e -> frame.goToDashboard(user));
 
-        ModernButton retryBtn = new ModernButton("🔄 Retry");
+        ModernButton retryBtn = new ModernButton("Retry");
+        retryBtn.setIcon(IconFactory.getIcon("retry", 16, Color.WHITE));
         retryBtn.addActionListener(e -> frame.startQuiz(user, domain, mode, null));
 
         bottom.add(dashBtn);
@@ -191,7 +195,9 @@ public class ResultPanel extends JPanel {
         JLabel numLbl = new JLabel("Q" + num);
         numLbl.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
         numLbl.setForeground(Theme.DARK_TEXT_SUB);
-        JLabel status = new JLabel(ok ? "✔ Correct" : "✖ Wrong");
+        JLabel status = new JLabel(ok ? "Correct" : "Wrong");
+        status.setIcon(IconFactory.getIcon(ok ? "check" : "close", 14, ok ? Theme.SUCCESS : Theme.DANGER));
+        status.setIconTextGap(6);
         status.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
         status.setForeground(ok ? Theme.SUCCESS : Theme.DANGER);
         hRow.add(numLbl, BorderLayout.WEST);
@@ -220,7 +226,9 @@ public class ResultPanel extends JPanel {
 
         // Explanation
         if (q.getExplanation() != null && !q.getExplanation().isBlank()) {
-            JLabel expLbl = new JLabel("<html><i>💡 " + q.getExplanation() + "</i></html>");
+            JLabel expLbl = new JLabel("<html><i>Explanation: " + q.getExplanation() + "</i></html>");
+            expLbl.setIcon(IconFactory.getIcon("warning", 14, Theme.ACCENT));
+            expLbl.setIconTextGap(6);
             expLbl.setFont(Theme.SMALL_FONT);
             expLbl.setForeground(new Color(148, 163, 184));
             details.add(Box.createVerticalStrut(4));

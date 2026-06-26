@@ -58,7 +58,9 @@ public class ProfileSubPanel extends JPanel {
         inner.setBorder(new EmptyBorder(28, 28, 28, 28));
 
         // ── Heading & Profile Header Card ─────────────────────────────────────
-        JLabel heading = new JLabel("👤 My Profile");
+        JLabel heading = new JLabel("My Profile");
+        heading.setIcon(IconFactory.getIcon("user", 24, Theme.ACCENT));
+        heading.setIconTextGap(10);
         heading.setFont(Theme.TITLE_FONT);
         heading.setForeground(Theme.DARK_TEXT_MAIN);
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -86,9 +88,8 @@ public class ProfileSubPanel extends JPanel {
         detailsPanel.add(Box.createVerticalStrut(4));
         detailsPanel.add(headerEmailLabel);
 
-        JLabel userAvatar = new JLabel("👤 ");
-        userAvatar.setFont(new Font("Segoe UI", Font.PLAIN, 42));
-        userAvatar.setForeground(Theme.ACCENT);
+        JLabel userAvatar = new JLabel();
+        userAvatar.setIcon(IconFactory.getIcon("user", 42, Theme.ACCENT));
 
         headerCard.add(userAvatar, BorderLayout.WEST);
         headerCard.add(detailsPanel, BorderLayout.CENTER);
@@ -96,7 +97,7 @@ public class ProfileSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // ── Stats ─────────────────────────────────────────────────────────────
-        inner.add(sectionLabel("📊 Statistics"));
+        inner.add(sectionLabel("analytics", "Statistics"));
         inner.add(Box.createVerticalStrut(12));
         statsBox.setOpaque(false);
         statsBox.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -105,7 +106,7 @@ public class ProfileSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // ── Badges ───────────────────────────────────────────────────────────
-        inner.add(sectionLabel("🏅 Achievements & Badges"));
+        inner.add(sectionLabel("trophy", "Achievements & Badges"));
         inner.add(Box.createVerticalStrut(10));
         badgeBox.setOpaque(false);
         badgeBox.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -113,7 +114,7 @@ public class ProfileSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // ── Favourite domains ─────────────────────────────────────────────────
-        inner.add(sectionLabel("⭐ Favourite Domains"));
+        inner.add(sectionLabel("star", "Favourite Domains"));
         inner.add(Box.createVerticalStrut(10));
         favBox.setOpaque(false);
         favBox.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -121,7 +122,7 @@ public class ProfileSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // ── Resume recommender ────────────────────────────────────────────────
-        inner.add(sectionLabel("📄 Resume-Based Domain Recommender"));
+        inner.add(sectionLabel("book", "Resume-Based Domain Recommender"));
         inner.add(Box.createVerticalStrut(6));
 
         JLabel hint = new JLabel("Paste keywords or a snippet from your resume to get domain suggestions.");
@@ -147,7 +148,9 @@ public class ProfileSubPanel extends JPanel {
         inner.add(rScroll);
         inner.add(Box.createVerticalStrut(10));
 
-        ModernButton analyzeBtn = new ModernButton("🔍 Analyse Resume");
+        ModernButton analyzeBtn = new ModernButton("Analyse Resume");
+        analyzeBtn.setIcon(IconFactory.getIcon("search", 14, Color.WHITE));
+        analyzeBtn.setIconTextGap(8);
         analyzeBtn.setMaximumSize(new Dimension(200, 36));
         analyzeBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
         analyzeBtn.addActionListener(e -> analyzeResume());
@@ -160,7 +163,7 @@ public class ProfileSubPanel extends JPanel {
         inner.add(Box.createVerticalStrut(28));
 
         // ── Password Update Section ──────────────────────────────────────────
-        inner.add(sectionLabel("🔒 Security & Password Update"));
+        inner.add(sectionLabel("lock", "Security & Password Update"));
         inner.add(Box.createVerticalStrut(12));
 
         RoundedPanel pwdCard = new RoundedPanel(16, Theme.DARK_CARD);
@@ -225,12 +228,12 @@ public class ProfileSubPanel extends JPanel {
             int level  = rs.getUserLevel(u.getUsername());
             int streak = rs.getUserStreak(u.getUsername());
 
-            statsBox.add(statCard("🧪 Tests Taken",  String.valueOf(tests),  Theme.ACCENT));
-            statsBox.add(statCard("🏆 Best Score",   best + "%",             Theme.SUCCESS));
-            statsBox.add(statCard("📊 Average",       avg + "%",              Theme.WARNING));
-            statsBox.add(statCard("⭐ XP Points",     String.valueOf(xp),     Theme.ACCENT));
-            statsBox.add(statCard("🎯 Level",         String.valueOf(level),  Theme.SUCCESS));
-            statsBox.add(statCard("🔥 Streak",        streak + " days",       Theme.DANGER));
+            statsBox.add(statCard("list", "Tests Taken",  String.valueOf(tests),  Theme.ACCENT));
+            statsBox.add(statCard("trophy", "Best Score",   best + "%",             Theme.SUCCESS));
+            statsBox.add(statCard("analytics", "Average",       avg + "%",              Theme.WARNING));
+            statsBox.add(statCard("star", "XP Points",     String.valueOf(xp),     Theme.ACCENT));
+            statsBox.add(statCard("star", "Level",         String.valueOf(level),  Theme.SUCCESS));
+            statsBox.add(statCard("timer", "Streak",        streak + " days",       Theme.DANGER));
 
             // Auto-grant milestones
             ps.checkAndGrantMilestones(u.getUsername(), tests, best);
@@ -238,7 +241,7 @@ public class ProfileSubPanel extends JPanel {
             // Badges
             List<String> badges = ps.getAchievements(u.getUsername());
             if (badges.isEmpty()) {
-                JLabel none = pill("Complete quizzes to unlock badges!", Theme.DARK_TEXT_SUB);
+                JLabel none = pill(null, "Complete quizzes to unlock badges!", Theme.DARK_TEXT_SUB);
                 badgeBox.add(none);
             } else {
                 for (String b : badges) badgeBox.add(badgePill(b));
@@ -247,10 +250,10 @@ public class ProfileSubPanel extends JPanel {
             // Favourites
             Set<String> favs = ps.getFavoriteDomains(u.getUsername());
             if (favs.isEmpty()) {
-                JLabel none = pill("Star domains in the Domains tab to see them here.", Theme.DARK_TEXT_SUB);
+                JLabel none = pill(null, "Star domains in the Domains tab to see them here.", Theme.DARK_TEXT_SUB);
                 favBox.add(none);
             } else {
-                for (String f : favs) favBox.add(pill("⭐ " + f, Theme.WARNING));
+                for (String f : favs) favBox.add(pill("star", f, Theme.WARNING));
             }
 
         } catch (Exception ex) {
@@ -297,35 +300,43 @@ public class ProfileSubPanel extends JPanel {
         String text = resumeArea.getText();
         List<String> recs = ps.recommendDomains(text);
         if (recs.isEmpty()) {
-            recsBox.add(pill("No matching domains found. Try adding more skills.", Theme.DARK_TEXT_SUB));
+            recsBox.add(pill(null, "No matching domains found. Try adding more skills.", Theme.DARK_TEXT_SUB));
         } else {
-            JLabel intro = pill("Recommended Domains: ", Theme.DARK_TEXT_MAIN);
+            JLabel intro = pill(null, "Recommended Domains: ", Theme.DARK_TEXT_MAIN);
             recsBox.add(intro);
-            for (String r : recs) recsBox.add(pill(r, Theme.ACCENT));
+            for (String r : recs) recsBox.add(pill("book", r, Theme.ACCENT));
         }
         recsBox.revalidate(); recsBox.repaint();
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    private JPanel statCard(String title, String value, Color accent) {
+    private JPanel statCard(String iconKey, String title, String value, Color accent) {
         RoundedPanel p = new RoundedPanel(12, Theme.DARK_CARD);
-        p.setLayout(new BorderLayout(0, 4));
+        p.setLayout(new BorderLayout(8, 4));
         p.setBorder(new EmptyBorder(14, 16, 14, 16));
         p.setBorderOverride(accent.darker(), 1);
-        JLabel t = new JLabel(title);
+        
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        top.setOpaque(false);
+        JLabel icon = new JLabel(IconFactory.getIcon(iconKey, 14, accent));
+        JLabel t = new JLabel("  " + title);
         t.setFont(Theme.SMALL_FONT);
         t.setForeground(Theme.DARK_TEXT_SUB);
+        top.add(icon); top.add(t);
+        
         JLabel v = new JLabel(value);
         v.setFont(new Font("Segoe UI", Font.BOLD, 22));
         v.setForeground(Color.WHITE);
-        p.add(t, BorderLayout.NORTH);
+        p.add(top, BorderLayout.NORTH);
         p.add(v, BorderLayout.CENTER);
         return p;
     }
 
     private JLabel badgePill(String text) {
-        JLabel l = new JLabel("🏅 " + text);
+        JLabel l = new JLabel(text);
+        l.setIcon(IconFactory.getIcon("trophy", 12, Theme.WARNING));
+        l.setIconTextGap(6);
         l.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
         l.setForeground(Theme.WARNING);
         l.setBorder(BorderFactory.createCompoundBorder(
@@ -334,16 +345,22 @@ public class ProfileSubPanel extends JPanel {
         return l;
     }
 
-    private JLabel pill(String text, Color fg) {
+    private JLabel pill(String iconKey, String text, Color fg) {
         JLabel l = new JLabel(text);
+        if (iconKey != null) {
+            l.setIcon(IconFactory.getIcon(iconKey, 12, fg));
+            l.setIconTextGap(6);
+        }
         l.setFont(Theme.SMALL_FONT);
         l.setForeground(fg);
         l.setBorder(new EmptyBorder(2, 6, 2, 6));
         return l;
     }
 
-    private JLabel sectionLabel(String text) {
+    private JLabel sectionLabel(String iconKey, String text) {
         JLabel l = new JLabel(text);
+        l.setIcon(IconFactory.getIcon(iconKey, 18, Theme.ACCENT));
+        l.setIconTextGap(8);
         l.setFont(Theme.SUBTITLE_FONT);
         l.setForeground(Theme.DARK_TEXT_MAIN);
         l.setAlignmentX(Component.LEFT_ALIGNMENT);

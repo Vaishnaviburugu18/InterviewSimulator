@@ -79,11 +79,14 @@ public class AdminPanel extends JPanel {
         header.setOpaque(false);
         header.setBorder(new EmptyBorder(22, 28, 12, 28));
         
-        JLabel title = new JLabel("🔧 Admin – Question Manager");
+        JLabel title = new JLabel("Admin – Question Manager");
+        title.setIcon(IconFactory.getIcon("admin", 22, Theme.ACCENT));
+        title.setIconTextGap(8);
         title.setFont(Theme.TITLE_FONT);
         title.setForeground(Theme.DARK_TEXT_MAIN);
         
-        ModernButton backBtn = new ModernButton("← Dashboard");
+        ModernButton backBtn = new ModernButton("Dashboard");
+        backBtn.setIcon(IconFactory.getIcon("arrow-left", 14, Color.WHITE));
         backBtn.setColors(new Color(51, 65, 85), new Color(71, 85, 105));
         backBtn.setFont(Theme.SMALL_FONT);
         backBtn.addActionListener(e -> frame.showCard(MainFrame.DASHBOARD));
@@ -149,10 +152,14 @@ public class AdminPanel extends JPanel {
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         btnRow.setOpaque(false);
         
-        ModernButton addBtn = new ModernButton("＋ Add");
-        ModernButton updateBtn = new ModernButton("✎ Update");
-        ModernButton deleteBtn = new ModernButton("✖ Delete");
-        ModernButton clearBtn = new ModernButton("Clear Form");
+        ModernButton addBtn = new ModernButton("Add");
+        addBtn.setIcon(IconFactory.getIcon("check", 14, Color.WHITE));
+        ModernButton updateBtn = new ModernButton("Update");
+        updateBtn.setIcon(IconFactory.getIcon("retry", 14, Color.WHITE));
+        ModernButton deleteBtn = new ModernButton("Delete");
+        deleteBtn.setIcon(IconFactory.getIcon("close", 14, Color.WHITE));
+        ModernButton clearBtn = new ModernButton("Clear");
+        clearBtn.setIcon(IconFactory.getIcon("refresh", 14, Color.WHITE));
 
         deleteBtn.setColors(Theme.DANGER, Theme.DANGER.darker());
         updateBtn.setColors(Theme.WARNING.darker(), Theme.WARNING.darker().darker());
@@ -184,14 +191,17 @@ public class AdminPanel extends JPanel {
         filterTopicCombo.setFont(Theme.SMALL_FONT);
         filterDiffCombo.setFont(Theme.SMALL_FONT);
 
-        filterCard.add(new JLabel("🔍 "));
+        JLabel searchIconLbl = new JLabel();
+        searchIconLbl.setIcon(IconFactory.getIcon("search", 16, Theme.DARK_TEXT_SUB));
+        filterCard.add(searchIconLbl);
         filterCard.add(searchField);
         filterCard.add(filterTopicCombo);
         filterCard.add(filterDiffCombo);
 
         ModernButton searchBtn = new ModernButton("Filter");
+        searchBtn.setIcon(IconFactory.getIcon("search", 12, Color.WHITE));
         searchBtn.setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
-        searchBtn.setPreferredSize(new Dimension(80, 28));
+        searchBtn.setPreferredSize(new Dimension(90, 28));
         searchBtn.addActionListener(e -> doFilterSearch());
         filterCard.add(searchBtn);
 

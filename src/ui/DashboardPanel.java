@@ -87,22 +87,24 @@ public class DashboardPanel extends JPanel {
         sidebar.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         // Brand
-        JPanel brandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 20));
+        JPanel brandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 20));
         brandPanel.setOpaque(false);
-        JLabel logo = new JLabel("🎯 PlacementPrep");
+        JLabel logoIcon = new JLabel(IconFactory.getIcon("trophy", 20, Theme.ACCENT));
+        JLabel logo = new JLabel("PlacementPrep");
         logo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         logo.setForeground(Color.WHITE);
+        brandPanel.add(logoIcon);
         brandPanel.add(logo);
         sidebar.add(brandPanel);
 
         sidebar.add(Box.createVerticalStrut(8));
 
         // Navigation items
-        addSidebarBtn(sidebar, "🏠  Home",      HOME,      true);
-        addSidebarBtn(sidebar, "📚  Domains",   DOMAINS,   false);
-        addSidebarBtn(sidebar, "📈  Analytics", ANALYTICS, false);
-        addSidebarBtn(sidebar, "📋  History",   HISTORY,   false);
-        addSidebarBtn(sidebar, "👤  Profile",   PROFILE,   false);
+        addSidebarBtn(sidebar, "home",      "Home",      HOME,      true);
+        addSidebarBtn(sidebar, "domains",   "Domains",   DOMAINS,   false);
+        addSidebarBtn(sidebar, "analytics", "Analytics", ANALYTICS, false);
+        addSidebarBtn(sidebar, "history",   "History",   HISTORY,   false);
+        addSidebarBtn(sidebar, "profile",   "Profile",   PROFILE,   false);
 
         sidebar.add(Box.createVerticalGlue());
 
@@ -128,7 +130,9 @@ public class DashboardPanel extends JPanel {
         xpBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 6));
 
         // Logout
-        ModernButton logoutBtn = new ModernButton("⏻  Logout");
+        ModernButton logoutBtn = new ModernButton("Logout");
+        logoutBtn.setIcon(IconFactory.getIcon("logout", 14, Color.WHITE));
+        logoutBtn.setIconTextGap(8);
         logoutBtn.setColors(new Color(30, 41, 59), new Color(51, 65, 85));
         logoutBtn.setFont(Theme.SMALL_FONT);
         logoutBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
@@ -148,8 +152,8 @@ public class DashboardPanel extends JPanel {
         add(sidebar, BorderLayout.WEST);
     }
 
-    private void addSidebarBtn(JPanel sidebar, String text, String card, boolean selected) {
-        SidebarBtn btn = new SidebarBtn(text, selected);
+    private void addSidebarBtn(JPanel sidebar, String iconKey, String text, String card, boolean selected) {
+        SidebarBtn btn = new SidebarBtn(iconKey, text, selected);
         btn.addActionListener(e -> switchTab(card, btn));
         sidebarBtns.add(btn);
         sidebar.add(btn);
@@ -201,9 +205,17 @@ public class DashboardPanel extends JPanel {
     // ─────────────────────────────────────────────────────────────────────────
     private static class SidebarBtn extends JButton {
         private boolean selected;
-        public SidebarBtn(String text, boolean selected) {
+        private final Icon normalIcon;
+        private final Icon activeIcon;
+
+        public SidebarBtn(String iconKey, String text, boolean selected) {
             super(text);
             this.selected = selected;
+            this.normalIcon = IconFactory.getIcon(iconKey, 16, Theme.DARK_TEXT_SUB);
+            this.activeIcon = IconFactory.getIcon(iconKey, 16, Color.WHITE);
+            
+            setIcon(selected ? activeIcon : normalIcon);
+            setIconTextGap(12);
             setFont(Theme.BODY_FONT);
             setForeground(selected ? Color.WHITE : Theme.DARK_TEXT_SUB);
             setBackground(selected ? new Color(99, 102, 241, 60) : new Color(0, 0, 0, 0));
@@ -213,13 +225,24 @@ public class DashboardPanel extends JPanel {
             setBorder(new EmptyBorder(10, 18, 10, 18));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
             addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) { if (!SidebarBtn.this.selected) setForeground(Color.WHITE); }
-                public void mouseExited(MouseEvent e)  { if (!SidebarBtn.this.selected) setForeground(Theme.DARK_TEXT_SUB); }
+                public void mouseEntered(MouseEvent e) {
+                    if (!SidebarBtn.this.selected) {
+                        setForeground(Color.WHITE);
+                        setIcon(activeIcon);
+                    }
+                }
+                public void mouseExited(MouseEvent e)  {
+                    if (!SidebarBtn.this.selected) {
+                        setForeground(Theme.DARK_TEXT_SUB);
+                        setIcon(normalIcon);
+                    }
+                }
             });
         }
         public void setSelected(boolean sel) {
             this.selected = sel;
             setForeground(sel ? Color.WHITE : Theme.DARK_TEXT_SUB);
+            setIcon(sel ? activeIcon : normalIcon);
             repaint();
         }
         @Override protected void paintComponent(Graphics g) {

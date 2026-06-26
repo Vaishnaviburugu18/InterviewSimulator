@@ -40,7 +40,9 @@ public class HistorySubPanel extends JPanel {
         header.setOpaque(false);
         header.setBorder(new EmptyBorder(28, 28, 16, 28));
 
-        JLabel heading = new JLabel("📋 Quiz History");
+        JLabel heading = new JLabel("Quiz History");
+        heading.setIcon(IconFactory.getIcon("history", 24, Theme.ACCENT));
+        heading.setIconTextGap(10);
         heading.setFont(Theme.TITLE_FONT);
         heading.setForeground(Theme.DARK_TEXT_MAIN);
 
