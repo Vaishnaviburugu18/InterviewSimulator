@@ -158,6 +158,10 @@ public class ResultPanel extends JPanel {
         }
 
         JScrollPane scroll = new JScrollPane(reviewArea);
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Theme.DARK_BG);
         scroll.getVerticalScrollBar().setUnitIncrement(16);

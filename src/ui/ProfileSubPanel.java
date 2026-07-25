@@ -45,6 +45,10 @@ public class ProfileSubPanel extends JPanel {
 
     private void build() {
         JScrollPane scroll = new JScrollPane(buildInner());
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Theme.DARK_BG);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -142,6 +146,10 @@ public class ProfileSubPanel extends JPanel {
             BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true),
             new EmptyBorder(8, 10, 8, 10)));
         JScrollPane rScroll = new JScrollPane(resumeArea);
+        rScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        rScroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        rScroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        rScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         rScroll.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
         rScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         rScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));

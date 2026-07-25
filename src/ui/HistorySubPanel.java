@@ -58,6 +58,10 @@ public class HistorySubPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         JScrollPane scroll = new JScrollPane(table);
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         scroll.setBorder(BorderFactory.createEmptyBorder(0, 28, 28, 28));
         scroll.getViewport().setBackground(Theme.DARK_CARD);
         scroll.setBackground(Theme.DARK_BG);

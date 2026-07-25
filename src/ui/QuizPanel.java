@@ -53,8 +53,9 @@ public class QuizPanel extends JPanel {
     private final JProgressBar progBar = new JProgressBar();
 
     private final JTextArea questionText = new JTextArea();
-    private final ButtonGroup optGroup = new ButtonGroup();
-    private final JRadioButton[] opts = new JRadioButton[4];
+    private final JLabel[] optLabels = new JLabel[4];
+    private final SelectionIndicator[] optIndicators = new SelectionIndicator[4];
+    private final boolean[] optSelected = new boolean[4];
     private final JPanel[] optPanels = new JPanel[4];
 
     private final ModernButton prevBtn = new ModernButton("Previous");
@@ -168,48 +169,51 @@ public class QuizPanel extends JPanel {
         optionsPanel.setOpaque(false);
 
         for (int i = 0; i < 4; i++) {
-            opts[i] = new JRadioButton();
-            optGroup.add(opts[i]);
+            optLabels[i] = new JLabel();
+            optIndicators[i] = new SelectionIndicator();
+            optSelected[i] = false;
             
             // Build modern Option Container
-            JPanel card = new JPanel(new BorderLayout());
+            JPanel card = new JPanel(new BorderLayout(16, 0));
             card.setBackground(Theme.DARK_CARD);
-            card.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
-            card.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
-            opts[i].setFont(Theme.BODY_FONT);
-            opts[i].setForeground(Theme.DARK_TEXT_MAIN);
-            opts[i].setFocusPainted(false);
-            opts[i].setOpaque(false);
-            opts[i].setBorder(new EmptyBorder(14, 16, 14, 16));
+            card.setBorder(new EmptyBorder(14, 16, 14, 16));
+            card.setOpaque(true);
 
-            card.add(opts[i], BorderLayout.CENTER);
-            optPanels[i] = card;
-            optionsPanel.add(card);
+            JPanel cardWrapper = new JPanel(new BorderLayout());
+            cardWrapper.setBackground(Theme.DARK_CARD);
+            cardWrapper.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
+            cardWrapper.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            
+            optLabels[i].setFont(Theme.BODY_FONT);
+            optLabels[i].setForeground(Theme.DARK_TEXT_MAIN);
+            
+            card.add(optIndicators[i], BorderLayout.WEST);
+            card.add(optLabels[i], BorderLayout.CENTER);
+
+            cardWrapper.add(card, BorderLayout.CENTER);
+            optPanels[i] = cardWrapper;
+            optionsPanel.add(cardWrapper);
 
             final int optIdx = i;
             // Hover and Click Action Bindings
-            opts[i].addActionListener(e -> {
-                saveCurrentAnswer();
-                updateOptionStyles();
-                updateNavGrid();
-            });
-            
-            card.addMouseListener(new MouseAdapter() {
+            cardWrapper.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) {
-                    if (!opts[optIdx].isSelected()) {
+                    if (!optSelected[optIdx]) {
+                        cardWrapper.setBackground(new Color(51, 65, 85));
                         card.setBackground(new Color(51, 65, 85));
-                        card.setBorder(BorderFactory.createLineBorder(Theme.ACCENT, 1, true));
+                        cardWrapper.setBorder(BorderFactory.createLineBorder(Theme.ACCENT, 1, true));
                     }
                 }
                 public void mouseExited(MouseEvent e) {
-                    if (!opts[optIdx].isSelected()) {
+                    if (!optSelected[optIdx]) {
+                        cardWrapper.setBackground(Theme.DARK_CARD);
                         card.setBackground(Theme.DARK_CARD);
-                        card.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
+                        cardWrapper.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
                     }
                 }
                 public void mouseClicked(MouseEvent e) {
-                    opts[optIdx].setSelected(true);
+                    for(int j=0; j<4; j++) optSelected[j] = false;
+                    optSelected[optIdx] = true;
                     saveCurrentAnswer();
                     updateOptionStyles();
                     updateNavGrid();
@@ -380,18 +384,17 @@ public class QuizPanel extends JPanel {
         difficultyBadge.setText(diff.toUpperCase());
 
         // Fill options
-        optGroup.clearSelection();
         for (int j = 0; j < 4; j++) {
-            opts[j].setText(q.getOption(j));
-            opts[j].setSelected(false);
+            optLabels[j].setText(q.getOption(j));
+            optSelected[j] = false;
         }
 
         // Restore answered choice
         String prevAnswer = answers.get(i);
         if (prevAnswer != null) {
-            for (JRadioButton opt : opts) {
-                if (opt.getText().trim().equalsIgnoreCase(prevAnswer.trim())) {
-                    opt.setSelected(true);
+            for (int j=0; j<4; j++) {
+                if (optLabels[j].getText().trim().equalsIgnoreCase(prevAnswer.trim())) {
+                    optSelected[j] = true;
                     break;
                 }
             }
@@ -426,8 +429,11 @@ public class QuizPanel extends JPanel {
 
     private void updateOptionStyles() {
         for (int i = 0; i < 4; i++) {
-            boolean sel = opts[i].isSelected();
-            optPanels[i].setBackground(sel ? new Color(99, 102, 241, 45) : Theme.DARK_CARD);
+            boolean sel = optSelected[i];
+            optIndicators[i].setSelected(sel);
+            Color bg = sel ? new Color(45, 55, 90) : Theme.DARK_CARD;
+            optPanels[i].setBackground(bg);
+            ((JPanel)optPanels[i].getComponent(0)).setBackground(bg);
             optPanels[i].setBorder(BorderFactory.createLineBorder(sel ? Theme.ACCENT : Theme.DARK_BORDER, 1, true));
         }
     }
@@ -443,9 +449,9 @@ public class QuizPanel extends JPanel {
     private void saveCurrentAnswer() {
         if (answers == null || idx >= answers.size()) return;
         String selection = null;
-        for (JRadioButton opt : opts) {
-            if (opt.isSelected()) {
-                selection = opt.getText();
+        for (int j=0; j<4; j++) {
+            if (optSelected[j]) {
+                selection = optLabels[j].getText();
                 break;
             }
         }
@@ -453,7 +459,7 @@ public class QuizPanel extends JPanel {
     }
 
     private void clearCurrentSelection() {
-        optGroup.clearSelection();
+        for (int j=0; j<4; j++) optSelected[j] = false;
         if (answers != null && idx < answers.size()) {
             answers.set(idx, null);
         }
@@ -511,10 +517,68 @@ public class QuizPanel extends JPanel {
                 ? "You have " + unanswered + " unanswered question(s). Are you sure you want to finish the quiz?"
                 : "All questions answered. Submit and view results?";
 
-        int choice = JOptionPane.showConfirmDialog(frame, msg, "Finish Quiz",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        JDialog dialog = new JDialog(frame, "Finish Quiz", true);
+        dialog.setUndecorated(true);
+        dialog.setBackground(new Color(0, 0, 0, 0));
 
-        if (choice == JOptionPane.YES_OPTION) {
+        RoundedPanel contentPanel = new RoundedPanel(16, Theme.DARK_CARD);
+        contentPanel.setLayout(new BorderLayout(20, 20));
+        contentPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Theme.ACCENT, 2, true),
+                new EmptyBorder(24, 32, 24, 32)
+        ));
+
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        headerPanel.setOpaque(false);
+        JLabel iconLabel = new JLabel(IconFactory.getIcon("warning", 24, Theme.WARNING));
+        JLabel titleLabel = new JLabel("Finish Quiz");
+        titleLabel.setFont(Theme.TITLE_FONT);
+        titleLabel.setForeground(Color.WHITE);
+        headerPanel.add(iconLabel);
+        headerPanel.add(titleLabel);
+        
+        // Message
+        JLabel msgLabel = new JLabel("<html><div style='width: 300px; line-height: 1.4;'>" + msg + "</div></html>");
+        msgLabel.setFont(Theme.BODY_FONT);
+        msgLabel.setForeground(Theme.DARK_TEXT_MAIN);
+        
+        // Buttons
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        btnPanel.setOpaque(false);
+        
+        ModernButton cancelBtn = new ModernButton("Cancel");
+        cancelBtn.setColors(Theme.DARK_BORDER, new Color(71, 85, 105));
+        cancelBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
+        
+        ModernButton finishBtn = new ModernButton("Finish Quiz");
+        finishBtn.setColors(Theme.ACCENT, Theme.ACCENT_HOVER);
+        finishBtn.setBorder(new EmptyBorder(10, 20, 10, 20));
+        
+        boolean[] confirmed = {false};
+        
+        cancelBtn.addActionListener(e -> {
+            dialog.dispose();
+        });
+        
+        finishBtn.addActionListener(e -> {
+            confirmed[0] = true;
+            dialog.dispose();
+        });
+        
+        btnPanel.add(cancelBtn);
+        btnPanel.add(finishBtn);
+        
+        contentPanel.add(headerPanel, BorderLayout.NORTH);
+        contentPanel.add(msgLabel, BorderLayout.CENTER);
+        contentPanel.add(btnPanel, BorderLayout.SOUTH);
+        
+        dialog.setContentPane(contentPanel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+
+        if (confirmed[0]) {
             submitQuiz();
         } else {
             if ("Timed".equalsIgnoreCase(mode) || "Mock".equalsIgnoreCase(mode)) {
@@ -553,28 +617,22 @@ public class QuizPanel extends JPanel {
     private static class NavButton extends JButton {
         private boolean selected = false;
         private boolean answered = false;
+        private final String numText;
 
         public NavButton(String text) {
-            super(text);
+            super(); // NO text!
+            this.numText = text;
             setFont(Theme.SMALL_FONT.deriveFont(Font.BOLD));
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
             setCursor(new Cursor(Cursor.HAND_CURSOR));
-            setForeground(Theme.DARK_TEXT_SUB);
             setPreferredSize(new Dimension(34, 34));
         }
 
         public void setStates(boolean selected, boolean answered) {
             this.selected = selected;
             this.answered = answered;
-            if (selected) {
-                setForeground(Color.WHITE);
-            } else if (answered) {
-                setForeground(Color.WHITE);
-            } else {
-                setForeground(Theme.DARK_TEXT_SUB);
-            }
             repaint();
         }
 
@@ -585,17 +643,65 @@ public class QuizPanel extends JPanel {
             if (selected) {
                 g2.setColor(Theme.ACCENT);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.setColor(Color.WHITE);
             } else if (answered) {
                 g2.setColor(Theme.SUCCESS);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.setColor(Color.WHITE);
             } else {
                 g2.setColor(Theme.DARK_CARD.brighter());
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
                 g2.setColor(Theme.DARK_BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
+                g2.setColor(Theme.DARK_TEXT_SUB);
+            }
+
+            g2.setFont(getFont());
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(numText);
+            int x = (getWidth() - textWidth) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2.drawString(numText, x, y);
+
+            g2.dispose();
+        }
+    }
+
+    private static class SelectionIndicator extends JPanel {
+        private boolean selected = false;
+
+        public SelectionIndicator() {
+            setOpaque(false);
+            setPreferredSize(new Dimension(20, 20));
+        }
+
+        public void setSelected(boolean b) {
+            this.selected = b;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            int size = 16;
+            int x = (getWidth() - size) / 2;
+            int y = (getHeight() - size) / 2;
+
+            if (selected) {
+                g2.setColor(Theme.ACCENT);
+                g2.fillOval(x, y, size, size);
+                g2.setColor(Color.WHITE);
+                g2.fillOval(x + size/4, y + size/4, size/2, size/2);
+            } else {
+                g2.setColor(Theme.DARK_BG);
+                g2.fillOval(x, y, size, size);
+                g2.setColor(Theme.DARK_BORDER);
+                g2.drawOval(x, y, size - 1, size - 1);
             }
             g2.dispose();
-            super.paintComponent(g);
         }
     }
 }

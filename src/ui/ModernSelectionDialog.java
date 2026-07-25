@@ -97,6 +97,10 @@ public class ModernSelectionDialog extends JDialog {
         cardsPanel.setLayout(new GridBagLayout());
         
         JScrollPane scroll = new JScrollPane(cardsPanel);
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Theme.DARK_BG);
         scroll.getVerticalScrollBar().setUnitIncrement(16);

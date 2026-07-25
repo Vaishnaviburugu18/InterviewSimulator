@@ -124,7 +124,13 @@ public class AdminPanel extends JPanel {
         questionArea.setWrapStyleWord(true);
         styleTextArea(questionArea);
         g.gridx = 0; g.gridy = row; leftPanel.add(formLabel("Question Text:"), g);
-        g.gridx = 1; leftPanel.add(new JScrollPane(questionArea), g);
+        g.gridx = 1; 
+        JScrollPane qScroll = new JScrollPane(questionArea);
+        qScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        qScroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        qScroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        qScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
+        leftPanel.add(qScroll, g);
         row++;
 
         row = addFormRow(leftPanel, g, row, "Option 1:", opt1Field);
@@ -137,7 +143,13 @@ public class AdminPanel extends JPanel {
         explanationArea.setWrapStyleWord(true);
         styleTextArea(explanationArea);
         g.gridx = 0; g.gridy = row; leftPanel.add(formLabel("Explanation:"), g);
-        g.gridx = 1; leftPanel.add(new JScrollPane(explanationArea), g);
+        g.gridx = 1; 
+        JScrollPane expScroll = new JScrollPane(explanationArea);
+        expScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        expScroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        expScroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        expScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
+        leftPanel.add(expScroll, g);
         row++;
 
         // Status Label
@@ -174,6 +186,10 @@ public class AdminPanel extends JPanel {
         leftPanel.add(btnRow, g);
 
         JScrollPane leftScroll = new JScrollPane(leftPanel);
+        leftScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        leftScroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        leftScroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        leftScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         leftScroll.setBorder(null);
         leftScroll.getViewport().setBackground(Theme.DARK_BG);
 
@@ -219,6 +235,10 @@ public class AdminPanel extends JPanel {
         // Scrollable JTable
         styleTable(questionsTable);
         JScrollPane tableScroll = new JScrollPane(questionsTable);
+        tableScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        tableScroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        tableScroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        tableScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         tableScroll.setBorder(BorderFactory.createLineBorder(Theme.DARK_BORDER, 1, true));
         tableScroll.getViewport().setBackground(Theme.DARK_CARD);
         rightPanel.add(tableScroll, BorderLayout.CENTER);

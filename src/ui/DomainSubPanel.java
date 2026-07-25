@@ -68,6 +68,10 @@ public class DomainSubPanel extends JPanel {
         grid.setOpaque(false);
         grid.setBorder(new EmptyBorder(0, 28, 28, 28));
         JScrollPane scroll = new JScrollPane(grid);
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Theme.DARK_BG);
         scroll.getVerticalScrollBar().setUnitIncrement(16);

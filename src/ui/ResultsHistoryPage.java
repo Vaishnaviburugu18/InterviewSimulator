@@ -47,6 +47,10 @@ public class ResultsHistoryPage extends JFrame {
         table.setRowHeight(25);
 
         JScrollPane scroll = new JScrollPane(table);
+        scroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        scroll.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(8, 0));
+        scroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 8));
         root.add(scroll, BorderLayout.CENTER);
 
         JButton back = new JButton("Back");
